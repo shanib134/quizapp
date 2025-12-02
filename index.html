@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anime Quiz</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: #f4f4f4;
+        padding: 40px;
+    }
+
+    #quiz-container {
+        max-width: 500px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.2s;
+        color: white;
+    }
+
+    .blue { background-color: #2196F3; }
+    .green { background-color: #4CAF50; }
+    .red { background-color: #f44336; }
+    .gray { background-color: #607D8B; }
+
+    #start-btn, #next-btn, #restart-btn {
+        background-color: #673AB7;
+    }
+
+    h2 { font-size: 22px; }
+</style>
+
+</head>
+<body>
+
+<div id="quiz-container">
+    <h1>Anime Quiz</h1>
+    <div id="content"></div>
+</div>
+
+<script>
+let questions = [
+    {
+        question: "Which is the Most Popular anime among this?",
+        answers: ["OnePiece", "Naruto", "Dragonball", "Sololeveling"],
+        correct: 0
+    },
+    {
+        question: "Who farmed more aura?",
+        answers: ["jinwoo", "Shadow", "Musan kibutsuji", "Tanjiro"],
+        correct: 1
+    },
+    {
+        question: "Who is most powerful among them?",
+        answers: ["Tanjiro", "Saitama", "Naruto", "Goku"],
+        correct: 1
+    }
+];
+
+let index = 0;
+let score = 0;
+let answered = false;
+
+let content = document.getElementById("content");
+
+function showStartScreen() {
+    content.innerHTML = `
+        <h2>Welcome to the Anime Quiz!</h2>
+        <p>Test your anime knowledge 🎌</p>
+        <button id="start-btn">Start Quiz</button>
+    `;
+
+    document.getElementById("start-btn").onclick = startQuiz;
+}
+
+function startQuiz() {
+    index = 0;
+    score = 0;
+    showQuestion();
+}
+
+function showQuestion() {
+    answered = false;
+    let q = questions[index];
+
+    let html = `
+        <h2>${q.question}</h2>
+    `;
+
+    q.answers.forEach((ans, i) => {
+        html += `<button class="blue" onclick="selectAnswer(${i})" id="btn${i}">${ans}</button>`;
+    });
+
+    html += `<br><button id="next-btn" style="display:none;">Next Question</button>`;
+
+    content.innerHTML = html;
+
+    document.getElementById("next-btn").onclick = nextQuestion;
+}
+
+function selectAnswer(selected) {
+    if (answered) return;
+    answered = true;
+
+    let correct = questions[index].correct;
+
+    // highlight correct and wrong
+    questions[index].answers.forEach((_, i) => {
+        let btn = document.getElementById("btn" + i);
+
+        if (i === correct) {
+            btn.className = "green";
+        } else if (i === selected) {
+            btn.className = "red";
+        } else {
+            btn.className = "gray";
+        }
+    });
+
+    if (selected === correct) score++;
+
+    document.getElementById("next-btn").style.display = "block";
+}
+
+function nextQuestion() {
+    index++;
+    if (index >= questions.length) {
+        showResult();
+    } else {
+        showQuestion();
+    }
+}
+
+function showResult() {
+    content.innerHTML = `
+        <h2>Quiz Finished!</h2>
+        <p>Your Score: <strong>${score} / ${questions.length}</strong></p>
+        <button id="restart-btn">Restart Quiz</button>
+    `;
+
+    document.getElementById("restart-btn").onclick = showStartScreen;
+}
+
+// Start with welcome page
+showStartScreen();
+</script>
+
+</body>
+</html>
